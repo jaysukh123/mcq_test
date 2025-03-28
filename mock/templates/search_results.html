@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Search Results for "{{ query }}"</h2>
+
+    {% if results.exams or results.books or results.syllabus %}
+        <ul>
+            {% for exam in results.exams %}
+                <li><strong>Exam:</strong> <a href="{% url 'exam_detail' exam.slug %}">{{ exam.name }}</a></li>
+            {% endfor %}
+
+            {% for book in results.books %}
+                <li><strong>Book:</strong> {{ book.name }}</li>
+            {% endfor %}
+
+            {% for syllabus in results.syllabus %}
+                <li><strong>Syllabus:</strong> {{ syllabus.name }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found for "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - IndiaBits{% endblock %}
+
+{% block content %}
+<style>
+    .page-container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .page-header {
+        color: #2c7ad6;
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    .page-content {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    .highlight {
+        color: #1e5ca9;
+        font-weight: bold;
+    }
+</style>
+
+<div class="page-container">
+    <h2 class="page-header">About IndiaBits</h2>
+    <p class="page-content">
+        Welcome to <span class="highlight">IndiaBits</span>, your go-to platform for learning and academic resources. 
+        Our mission is to provide high-quality educational content, 
+        helping students and professionals excel in their respective fields.
+    </p>
+    <p class="page-content">
+        We cover various subjects, competitive exams, and offer study materials designed by experts. 
+        Join us on this journey of learning and growth!
+    </p>
+</div>
+
+{% endblock %}

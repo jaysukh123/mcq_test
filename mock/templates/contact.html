@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - IndiaBits{% endblock %}
+
+{% block content %}
+<style>
+    .contact-container {
+        max-width: 700px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .contact-header {
+        color: #2c7ad6;
+        font-size: 28px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .contact-info {
+        font-size: 18px;
+        color: #555;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .contact-info a {
+        color: #2c7ad6;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .contact-info a:hover {
+        text-decoration: underline;
+    }
+
+    .contact-form {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    .contact-form label {
+        font-size: 16px;
+        font-weight: bold;
+        display: block;
+        margin: 12px 0 5px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: border 0.3s ease-in-out;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+        border-color: #2c7ad6;
+        outline: none;
+    }
+
+    .contact-form textarea {
+        resize: vertical;
+        height: 120px;
+    }
+
+    .contact-form button {
+        background: #2c7ad6;
+        color: white;
+        font-size: 18px;
+        border: none;
+        padding: 12px;
+        width: 100%;
+        margin-top: 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .contact-form button:hover {
+        background: #1e5ca9;
+    }
+
+    .alert {
+        background-color: #d4edda;
+        color: #155724;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="contact-container">
+    <h2 class="contact-header">Get in Touch</h2>
+    <p class="contact-info">📍 Rajkot, Gujarat, India</p>
+    <p class="contact-info">📧 Email: <a href="mailto:dafdajatin7@gmail.com">dafdajatin7@gmail.com</a></p>
+    <p class="contact-info">📞 Phone: +91 6351594595</p>
+
+    <div class="contact-form">
+        <h3>Send Us a Message</h3>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <label for="id_name">Name:</label>
+            {{ form.name }}
+
+            <label for="id_email">Email:</label>
+            {{ form.email }}
+
+            <label for="id_subject">Subject:</label>
+            {{ form.subject }}
+
+            <label for="id_message">Message:</label>
+            {{ form.message }}
+
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

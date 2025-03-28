@@ -1,0 +1,20 @@
+<table>
+    <tr>
+        <th>Question</th>
+        <th>Option A</th>
+        <th>Option B</th>
+        <th>Option C</th>
+        <th>Option D</th>
+        <th>Answer</th>
+    </tr>
+    {% for mcq in mcqs %}
+    <tr>
+        <td>{{ mcq.question }}</td>
+        <td>{{ mcq.option_a }}</td>
+        <td>{{ mcq.option_b }}</td>
+        <td>{{ mcq.option_c }}</td>
+        <td>{{ mcq.option_d }}</td>
+        <td>{{ mcq.correct_answer }}</td>
+    </tr>
+    {% endfor %}
+</table>

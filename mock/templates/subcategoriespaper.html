@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+<div class="container">
+    <h2>Papers for {{ subcategory_name }}</h2>
+    
+    {% if papers %}
+        <ul>
+            {% for paper in papers %}
+                <li>
+                    <a href="{% url 'paper_detail' paper.id %}">{{ paper.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No papers available for this subcategory.</p>
+    {% endif %}
+
+    <a href="{% url 'subcategories' category_slug=category_slug %}">← Back to Subcategories</a>
+</div>

@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category_name|title }} - Yearly Papers{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        display: flex;
+        gap: 20px;
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 250px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+    }
+
+    .sidebar h3 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .sidebar ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar ul li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .sidebar ul li a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .sidebar ul li a:hover {
+        color: #0056b3;
+    }
+
+    /* Main Content */
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .papers-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .papers-list li {
+        padding: 10px;
+        background: #f8f9fa;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+
+    .papers-list li:hover {
+        background: #3498db;
+        color: white;
+    }
+
+    .shift {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .shift:hover {
+        background: #3498db;
+        color: white;
+    }
+</style>
+
+<h1 style="text-align: center;">{{ category_name|title }} Year-wise Papers</h1>
+
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h3>Select Year</h3>
+        <ul>
+            {% for year in years %}
+                <li><a href="#year-{{ year }}">{{ year }}</a></li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Year-wise Papers -->
+        <section class="section">
+            <h1>{{ category_name|title }} Previous Year Papers</h1>
+            {% for year, paper_list in papers.items %}
+                <div id="year-{{ year }}">
+                    <h2>{{ year }}</h2>
+                    <ul class="papers-list">
+                        {% for paper in paper_list %}
+                            <li>{{ paper }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </section>
+
+        <!-- 2024 Shift-wise Papers -->
+        <section class="section">
+            <h2>2024 Shift-wise Papers</h2>
+            <div id="shiftList"></div>
+        </section>
+    </main>
+</div>
+
+<script>
+    function fetchYears(category) {
+        fetch(`/get-years/${category}/`)
+            .then(response => response.json())
+            .then(data => {
+                let yearList = document.getElementById("yearList");
+                yearList.innerHTML = "";
+
+                data.years.forEach(year => {
+                    let button = `<button class="year-button" onclick="fetchPapers('${category}', ${year})">${year}</button>`;
+                    yearList.innerHTML += button;
+                });
+            })
+            .catch(error => console.error("Error fetching years:", error));
+    }
+
+    function fetchPapers(category, year) {
+        fetch(`/get-papers/${category}/${year}/`)
+            .then(response => response.json())
+            .then(data => {
+                let paperList = document.getElementById("paperList");
+                paperList.innerHTML = "";
+
+                data.papers.forEach(paper => {
+                    let button = `<button class="paper-button" onclick="fetchShifts('${category}', ${year}, '${paper}')">${paper}</button>`;
+                    paperList.innerHTML += button;
+                });
+            })
+            .catch(error => console.error("Error fetching papers:", error));
+    }
+
+    function fetchShifts(category, year, paper) {
+        fetch(`/fetch-shifts/${category}/${year}/${paper}/`)
+            .then(response => response.json())
+            .then(data => {
+                let shiftList = document.getElementById("shiftList");
+                shiftList.innerHTML = "";
+
+                data.shifts.forEach(shift => {
+                    let shiftHTML = `<div class="shift">${shift}</div>`;
+                    shiftList.innerHTML += shiftHTML;
+                });
+            })
+            .catch(error => console.error("Error fetching shifts:", error));
+    }
+</script>
+
+{% endblock %}

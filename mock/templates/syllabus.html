@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Syllabus - IndiaBits{% endblock %}
+
+{% block content %}
+<style>
+    /* Container */
+    .syllabus-container {
+        max-width: 900px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* Page Heading */
+    .syllabus-header {
+        text-align: center;
+        color: var(--heading-color, #2c7ad6);
+        margin-bottom: 20px;
+    }
+
+    /* Search Bar */
+    .search-box {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color, #ccc);
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    /* Accordion Button */
+    .accordion {
+        background: var(--primary-color, #2c7ad6);
+        color: white;
+        cursor: pointer;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        font-size: 18px;
+        font-weight: bold;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        transition: background 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    }
+
+    .accordion:hover {
+        background: var(--primary-dark, #1e5ca9);
+    }
+
+    /* Active Accordion */
+    .accordion.active {
+        background: #1a5cab;
+    }
+
+    /* Panel (Hidden Content) */
+    .panel {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background: var(--card-bg, #f9f9f9);
+        border-radius: 5px;
+        padding: 0 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .panel ul {
+        padding: 15px 0;
+        list-style-type: none;
+    }
+
+    .panel ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color, #ddd);
+    }
+
+    .panel ul li:last-child {
+        border-bottom: none;
+    }
+
+    .panel ul li a {
+        text-decoration: none;
+        color: var(--text-color, #333);
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .panel ul li a:hover {
+        color: var(--primary-color, #2c7ad6);
+        text-decoration: underline;
+    }
+</style>
+
+<!-- Main Syllabus Section -->
+<div class="syllabus-container">
+    <h2 class="syllabus-header">Exam Syllabus</h2>
+
+    <!-- Search Bar -->
+    <input type="text" id="searchBox" class="search-box" placeholder="Search for a topic...">
+
+    {% if categories %}
+        {% for category in categories %}
+            <button class="accordion" aria-expanded="false">{{ category.name }}</button>
+            <div class="panel" aria-hidden="true">
+                <ul>
+                    {% for subcategory in category.subcategories.all %}
+                        <li>
+                            {% if subcategory.syllabus_file %}
+                                <a href="{{ subcategory.syllabus_file.url }}" target="_blank">{{ subcategory.name }} 📄</a>
+                            {% else %}
+                                {{ subcategory.name }} (No syllabus available)
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li>No topics available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No syllabus available.</p>
+    {% endif %}
+</div>
+
+<!-- JavaScript for Accordion & Search -->
+<script>
+    // Accordion Toggle
+    document.querySelectorAll(".accordion").forEach(button => {
+        button.addEventListener("click", function () {
+            this.classList.toggle("active");
+            let panel = this.nextElementSibling;
+            
+            if (panel.style.maxHeight) {
+                panel.style.maxHeight = null;
+                this.setAttribute("aria-expanded", "false");
+                panel.setAttribute("aria-hidden", "true");
+            } else {
+                panel.style.maxHeight = panel.scrollHeight + "px";
+                this.setAttribute("aria-expanded", "true");
+                panel.setAttribute("aria-hidden", "false");
+            }
+        });
+    });
+
+    // Search Filter
+    document.getElementById("searchBox").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+
+        document.querySelectorAll(".accordion").forEach(button => {
+            let categoryText = button.textContent.toLowerCase();
+            let panel = button.nextElementSibling;
+            let found = false;
+
+            // Check if category name matches
+            if (categoryText.includes(filter)) {
+                button.style.display = "block";
+                found = true;
+            } else {
+                button.style.display = "none";
+            }
+
+            // Check subcategories
+            panel.querySelectorAll("ul li").forEach(item => {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    item.style.display = "block";
+                    found = true;
+                } else {
+                    item.style.display = "none";
+                }
+            });
+
+            // Show or hide the panel based on search results
+            if (found) {
+                button.style.display = "block";
+            } else {
+                button.style.display = "none";
+            }
+        });
+    });
+</script>
+
+{% endblock %}

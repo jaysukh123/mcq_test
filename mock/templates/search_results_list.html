@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<ul>
+    {% for exam in results.exams %}
+        <li><strong>Exam:</strong> <a href="{% url 'exam_detail' exam.slug %}">{{ exam.name }}</a></li>
+    {% endfor %}
+
+    {% for book in results.books %}
+        <li><strong>Book:</strong> {{ book.name }}</li>
+    {% endfor %}
+
+    {% for syllabus in results.syllabus %}
+        <li><strong>Syllabus:</strong> {{ syllabus.name }}</li>
+    {% endfor %}
+
+    {% if not results.exams and not results.books and not results.syllabus %}
+        <p>No results found.</p>
+    {% endif %}
+</ul>
+{% endblock %}

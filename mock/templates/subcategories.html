@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Subcategories{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2><i class="fas fa-layer-group"></i> {{ category.name }} - Subcategories</h2>
+
+    <!-- Back Button -->
+    <div class="back-btn">
+        <a href="{% url 'home' %}">
+            <i class="fas fa-arrow-left"></i> Back to Categories
+        </a>
+    </div>
+
+    {% if subcategories %}
+        <div class="subcategory-grid">
+            {% for subcategory in subcategories %}
+                <div class="subcategory-card">
+                    <a href="{% url 'papers' category_slug=category.slug subcategory_slug=subcategory.slug %}">
+                        <i class="fas fa-folder-open"></i> {{ subcategory.name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-subcategories"><i class="fas fa-exclamation-circle"></i> No subcategories available.</p>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 0px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 28px;
+        color: #2c7ad6;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .back-btn {
+        text-align: left;
+        margin-bottom: 20px;
+    }
+
+    .back-btn a {
+        text-decoration: none;
+        font-size: 16px;
+        color: #555;
+        font-weight: bold;
+        padding: 8px 12px;
+        background: #e3e3e3;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background 0.3s ease;
+    }
+
+    .back-btn a:hover {
+        background: #d0d0d0;
+    }
+
+    .back-btn i {
+        margin-right: 5px;
+    }
+
+    .subcategory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .subcategory-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+
+    .subcategory-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .subcategory-card a {
+        text-decoration: none;
+        font-size: 18px;
+        color: #2c7ad6;
+        font-weight: bold;
+        display: block;
+    }
+
+    .subcategory-card i {
+        font-size: 22px;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    .no-subcategories {
+        font-size: 18px;
+        color: #ff4d4d;
+        font-weight: bold;
+    }
+
+    .no-subcategories i {
+        color: #ff4d4d;
+        margin-right: 5px;
+    }
+</style>
+
+{% endblock %}

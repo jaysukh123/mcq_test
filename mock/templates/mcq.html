@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .mcq-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .mcq-title {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-top: 20px;
+        }
+
+        .mcq-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .mcq-list li {
+            width: 100%;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .option-label {
+            display: block;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            background: #f1f1f1;
+            transition: background 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .option-label:hover {
+            background: #e0e0e0;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .correct {
+            background: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .wrong {
+            background: #f8d7da !important;
+            color: #721c24;
+            font-weight: bold;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+            border-left: 4px solid #28a745;
+            padding-left: 10px;
+            font-weight: bold;
+        }
+
+        .answer-key {
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 5px;
+        }
+        .pagination {
+            text-align: center;
+            margin-top: 30px; /* Increased margin for better spacing */
+            padding: 10px 0;  /* Added padding for a better layout */
+        }
+        
+        .pagination a {
+            padding: 12px 20px;  /* Increased padding for better clickability */
+            margin: 10px;  /* More spacing between buttons */
+            background: #007bff;
+            color: white;
+            border-radius: 8px;  /* Slightly rounded buttons */
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: background 0.3s, transform 0.2s;
+        }
+        
+        .pagination a:hover {
+            background: #0056b3;
+            transform: scale(1.05);  /* Slight zoom effect on hover */
+        }
+        
+        @media (max-width: 768px) {
+            .option-label {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    </style>
+    
+    <div class="mcq-container">
+        <h2 class="mcq-title">{{ paper.name }} - MCQs</h2>
+        
+        <ul class="mcq-list">
+            {% for mcq in page_obj %}
+                <li>
+                    <!-- ✅ Fixed Global Question Numbering -->
+                    <p><strong>Q{{ forloop.counter0|add:page_obj.start_index }}: {{ mcq.question }}</strong></p>
+                    
+                    <label class="option-label">
+                        <input type="radio" name="mcq_{{ mcq.id }}" data-option="A" data-correct="{{ mcq.correct_answer }}" data-explanation="{{ mcq.explanation }}"> A) {{ mcq.option_a }}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="mcq_{{ mcq.id }}" data-option="B" data-correct="{{ mcq.correct_answer }}" data-explanation="{{ mcq.explanation }}"> B) {{ mcq.option_b }}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="mcq_{{ mcq.id }}" data-option="C" data-correct="{{ mcq.correct_answer }}" data-explanation="{{ mcq.explanation }}"> C) {{ mcq.option_c }}
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="mcq_{{ mcq.id }}" data-option="D" data-correct="{{ mcq.correct_answer }}" data-explanation="{{ mcq.explanation }}"> D) {{ mcq.option_d }}
+                    </label>
+                    
+                    <p class="answer-key"></p>
+                    <p class="explanation"></p>
+                </li>
+            {% empty %}
+                <p>No MCQs available.</p>
+            {% endfor %}
+        </ul>
+        
+        <!-- ✅ Fixed Pagination -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+        
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+
+    <!-- ✅ JavaScript: Interactive MCQ Selection -->
+    <script>
+        document.querySelectorAll('.mcq-list li').forEach(questionBlock => {
+            const options = questionBlock.querySelectorAll('input[type="radio"]');
+            const explanationParagraph = questionBlock.querySelector('.explanation');
+            const answerKey = questionBlock.querySelector('.answer-key');
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (questionBlock.classList.contains('answered')) return; // Prevent multiple clicks
+
+                    const selectedOption = this.dataset.option;
+                    const correctOption = this.dataset.correct;
+                    const explanation = this.dataset.explanation;
+
+                    // Highlight selected answer (correct or wrong)
+                    options.forEach(opt => {
+                        if (opt.dataset.option === correctOption) {
+                            opt.parentNode.classList.add('correct'); // Correct answer: Green
+                        } else if (opt.dataset.option === selectedOption) {
+                            opt.parentNode.classList.add('wrong'); // Wrong answer: Red
+                        }
+                        opt.disabled = true; // Disable all options
+                    });
+
+                    answerKey.innerHTML = `<strong>Answer:</strong> Option ${correctOption}`;
+                    explanationParagraph.innerHTML = `<strong>Explanation:</strong> ${explanation}`;
+                    explanationParagraph.style.display = 'block';
+
+                    // Mark this question as answered
+                    questionBlock.classList.add('answered');
+                });
+            });
+        });
+    </script>
+{% endblock %}

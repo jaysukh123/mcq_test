@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %} Exam Details - {{ exam.name }} {% endblock %}
+
+{% block content %}
+<style>
+    /* General Container Styling */
+    .exam-detail-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        transition: 0.3s ease-in-out;
+    }
+
+    /* Header Styling */
+    .exam-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .exam-header h1 {
+        font-size: 32px;
+        color: #2c7ad6;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .exam-category {
+        font-size: 18px;
+        color: #777;
+        font-weight: 500;
+    }
+
+    /* Exam Content Styling */
+    .exam-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .exam-image {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+    }
+
+    .exam-image:hover {
+        transform: scale(1.05);
+    }
+
+    .exam-info {
+        flex: 1;
+    }
+
+    .exam-info h2 {
+        font-size: 22px;
+        color: #333;
+        margin-top: 15px;
+        border-bottom: 2px solid #2c7ad6;
+        padding-bottom: 5px;
+        display: inline-block;
+    }
+
+    .exam-info p {
+        font-size: 17px;
+        color: #555;
+        line-height: 1.7;
+        margin-top: 10px;
+    }
+
+    .exam-info ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .exam-info ul li {
+        padding: 10px 0;
+        font-size: 17px;
+        color: #444;
+        display: flex;
+        align-items: center;
+    }
+
+    .exam-info ul li strong {
+        color: #2c7ad6;
+        min-width: 160px;
+        display: inline-block;
+    }
+
+    /* Buttons */
+    .btn-primary, .btn-secondary {
+        display: inline-block;
+        text-align: center;
+        padding: 14px 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-size: 17px;
+        transition: 0.3s ease-in-out;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        background-color: #2c7ad6;
+        color: white;
+        box-shadow: 0px 3px 8px rgba(44, 122, 214, 0.3);
+    }
+
+    .btn-primary:hover {
+        background-color: #1b5dab;
+        transform: translateY(-3px);
+        box-shadow: 0px 5px 12px rgba(44, 122, 214, 0.5);
+    }
+
+    .btn-secondary {
+        background-color: #f4f4f4;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background-color: #ddd;
+        transform: translateY(-3px);
+    }
+
+    /* No Exam Found */
+    .no-exam-message {
+        text-align: center;
+        padding: 30px;
+    }
+
+    .no-exam-message img {
+        max-width: 200px;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+        .exam-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .exam-info ul li {
+            justify-content: center;
+        }
+    }
+
+</style>
+
+<div class="exam-detail-container">
+    {% if exam %}
+        <div class="exam-header">
+            <h1>{{ exam.name }}</h1>
+            <p class="exam-category">Category: {{ exam.category|title }}</p>
+        </div>
+
+        <div class="exam-content">
+            {% comment %} {% if exam.image %}
+                <img src="{{ exam.image.url }}" alt="{{ exam.name }}" class="exam-image">
+            {% else %}
+                <img src="https://via.placeholder.com/400" alt="No Image Available" class="exam-image">
+            {% endif %} {% endcomment %}
+
+            <div class="exam-info">
+                <h2>About the Exam</h2>
+                <p>{{ exam.description }}</p>
+
+                <h2>Exam Details</h2>
+                <ul>
+                    <li><strong>📅 Exam Date:</strong> {{ exam.exam_date|date:"F d, Y" }}</li>
+                    <li><strong>✅ Eligibility:</strong> {{ exam.eligibility }}</li>
+                    <li><strong>🖥 Exam Mode:</strong> {{ exam.exam_mode }}</li>
+                    <li><strong>📚 Subjects Covered:</strong> {{ exam.subjects }}</li>
+                    <li><strong>⏳ Duration:</strong> {{ exam.duration }}</li>
+                    <li><strong>🔢 Marking Scheme:</strong> {{ exam.marking_scheme }}</li>
+                </ul>
+
+                {% if exam.official_website %}
+                    <a href="{{ exam.official_website }}" target="_blank" class="btn-primary">Visit Official Website</a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="no-exam-message">
+            <img src="https://via.placeholder.com/250" alt="No data found">
+            <h2>No Exam Details Found</h2>
+            <p>We couldn't find any details for this exam. Please check back later.</p>
+            <a href="{% url 'exams' %}" class="btn-secondary">← Back to Exam List</a>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'exams' %}" class="btn-secondary">← Back to Exam List</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories - Online Test Series{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        text-align: center;
+        padding: 30px 15px;
+    }
+
+    #searchBox {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        font-size: 18px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    #searchBox:focus {
+        border-color: #3498db;
+        box-shadow: 0px 0px 5px rgba(52, 152, 219, 0.5);
+    }
+
+    .categories-column {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .exam-category {
+        width: 100%;
+        max-width: 600px;
+        background: #3498DB;
+        color: white;
+        padding: 18px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+    }
+
+    .exam-category:hover {
+        background: #217dbb;
+        transform: scale(1.02);
+    }
+
+    .exam-category h4 {
+        margin: 0;
+        font-size: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .exam-category .toggle-icon {
+        font-size: 18px;
+        transition: transform 0.3s ease;
+    }
+
+    .exam-category.open .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .exam-category ul {
+        display: none;
+        list-style: none;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+        transition: max-height 0.3s ease-in-out;
+        overflow: hidden;
+    }
+
+    .exam-category ul li {
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 5px;
+        transition: 0.3s;
+        margin-bottom: 5px;
+    }
+
+    .exam-category ul li a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        display: block;
+        transition: color 0.3s;
+    }
+
+    .exam-category ul li:hover {
+        background: #ddd;
+    }
+
+    .exam-category ul li a:hover {
+        color: #3498db;
+    }
+
+    @media (max-width: 768px) {
+        .exam-category {
+            max-width: 90%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .exam-category {
+            padding: 15px;
+        }
+
+        .exam-category h4 {
+            font-size: 18px;
+        }
+
+        .exam-category ul li a {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<input type="text" id="searchBox" placeholder="Search for an exam...">
+
+<div class="container">
+    <h2>Exam Categories</h2>
+    <div class="categories-column">
+        {% for category, subcategories in categories.items %}
+            <div class="exam-category">
+                <h4>
+                    <i class="{{ category.icon }}"></i> {{ category.name }}
+                    <span class="toggle-icon">▼</span>
+                </h4>
+                <ul>
+                    {% for subcategory in subcategories %}
+                        <li><a href="{% url 'subcategories' subcategory.slug %}">{{ subcategory.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Toggle category dropdown
+    document.querySelectorAll('.exam-category h4').forEach(category => {
+        category.addEventListener('click', () => {
+            let parent = category.parentElement;
+            let list = category.nextElementSibling;
+            let icon = category.querySelector('.toggle-icon');
+
+            if (list.style.display === 'block') {
+                list.style.display = 'none';
+                parent.classList.remove('open');
+            } else {
+                // Close all other categories before opening
+                document.querySelectorAll('.exam-category ul').forEach(ul => ul.style.display = 'none');
+                document.querySelectorAll('.exam-category').forEach(cat => cat.classList.remove('open'));
+
+                list.style.display = 'block';
+                parent.classList.add('open');
+            }
+        });
+    });
+
+    // Improved search functionality
+    document.getElementById('searchBox').addEventListener('keyup', function () {
+        let searchTerm = this.value.toLowerCase();
+        document.querySelectorAll('.exam-category').forEach(category => {
+            let found = false;
+            let categoryName = category.querySelector('h4').textContent.toLowerCase();
+            category.querySelectorAll('ul li').forEach(item => {
+                let subcategoryName = item.textContent.toLowerCase();
+                if (subcategoryName.includes(searchTerm) || categoryName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    found = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            category.style.display = found ? 'block' : 'none';
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IndiaBits</title>
+    {% load static %}
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <style>
+      /* Global Styles */
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      /* Dark Mode */
+      .dark-mode {
+        background-color: #222;
+        color: white;
+      }
+
+      /* Navbar */
+      .navbar {
+        background: linear-gradient(135deg, #2c3e50, #4ca1af);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .navbar .logo {
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        transition: color 0.3s;
+      }
+
+      .navbar .logo:hover {
+        color: #f8b400;
+      }
+
+      .navbar-right {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .navbar-item {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s, transform 0.3s;
+      }
+
+      .navbar-item:hover {
+        color: #f8b400;
+        transform: scale(1.1);
+      }
+
+      .menu-toggle {
+        display: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: white;
+      }
+
+      /* Search Bar */
+      .search-bar form {
+        display: flex;
+        border: 2px solid #f8b400;
+        border-radius: 50px;
+        overflow: hidden;
+        max-width: 450px;
+      }
+
+      .search-bar input {
+        padding: 10px;
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 16px;
+      }
+
+      .search-bar button {
+        padding: 10px 15px;
+        background: #f8b400;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .search-bar button:hover {
+        background: #ff9800;
+      }
+
+      /* Dark Mode Toggle */
+      #darkModeToggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #222;
+        color: white;
+        border: none;
+        padding: 12px;
+        cursor: pointer;
+        border-radius: 50%;
+        font-size: 20px;
+        transition: background 0.3s, transform 0.3s;
+      }
+
+      #darkModeToggle:hover {
+        background: #f8b400;
+        transform: rotate(360deg);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .navbar-right {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 60px;
+          right: 20px;
+          background: #222;
+          padding: 15px;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-right.active {
+          display: flex;
+          animation: fadeIn 0.3s;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a class="logo" href="{% url 'home' %}">IndiaBits</a>
+      <div class="menu-toggle" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </div>
+      <div class="navbar-right">
+        <div class="search-bar">
+          <form action="{% url 'search' %}" method="GET">
+            <input
+              type="text"
+              id="search-input"
+              name="query"
+              placeholder="Search exams, books..."
+              autocomplete="off"
+            />
+            <div id="search-results"></div>
+            <button type="submit"><i class="fas fa-search"></i></button>
+          </form>
+        </div>
+        <a class="navbar-item" href="{% url 'home' %}">Home</a>
+        <a class="navbar-item" href="{% url 'exams' %}">Exams</a>
+        <a class="navbar-item" href="{% url 'aptitude' %}">Aptitude</a>
+        <a class="navbar-item" href="{% url 'syllabus' %}">Syllabus</a>
+        <a class="navbar-item" href="{% url 'books' %}">Books</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">{% block content %} {% endblock %}</div>
+
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle">🌙</button>
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+
+    <!-- JavaScript -->
+    <script>
+      // Navbar Toggle
+      function toggleMenu() {
+        document.querySelector(".navbar-right").classList.toggle("active");
+      }
+
+      // Dark Mode Toggle with Local Storage
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const body = document.body;
+
+      function toggleDarkMode() {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem(
+          "darkMode",
+          body.classList.contains("dark-mode") ? "enabled" : "disabled"
+        );
+      }
+
+      // Check stored dark mode preference
+      if (localStorage.getItem("darkMode") === "enabled") {
+        body.classList.add("dark-mode");
+      }
+
+      darkModeToggle.addEventListener("click", toggleDarkMode);
+
+
+      document.getElementById("search-input").addEventListener("keyup", function() {
+        const query = this.value;
+        if (query.length > 2) {
+            fetch(`/search-suggestions/?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("search-results").innerHTML = data.map(
+                        item => `<div class="search-item">${item}</div>`
+                    ).join("");
+                });
+        } else {
+            document.getElementById("search-results").innerHTML = "";
+        }
+    });
+    
+    </script>
+  </body>
+</html>
